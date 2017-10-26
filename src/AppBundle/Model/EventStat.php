@@ -25,12 +25,6 @@ use InvalidArgumentException;
  */
 class EventStat extends Model
 {
-    const METRIC_TYPES = [
-        'retention',
-        'pages-created',
-        'pages-improved',
-    ];
-
     /**
      * @ORM\Id
      * @ORM\Column(name="es_id", type="integer")
@@ -79,9 +73,9 @@ class EventStat extends Model
      */
     private function assignMetric($metric, $value)
     {
-        if (!in_array($metric, self::METRIC_TYPES)) {
+        if (!in_array($metric, $this->metricTypes())) {
             throw new InvalidArgumentException(
-                "'metric' must be of type: ".implode(', ', self::METRIC_TYPES)
+                "'metric' must be of type: ".implode(', ', $this->metricTypes())
             );
         }
         $this->metric = $metric;
@@ -110,5 +104,19 @@ class EventStat extends Model
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Get an array of valid metric types.
+     * PHP 5.5.9 doesn't allow array-type constants.
+     * @return string[]
+     */
+    private function metricTypes()
+    {
+        return [
+            'retention',
+            'pages-created',
+            'pages-improved',
+        ];
     }
 }
